@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Админка</title>
+</head>
+<body>
+  <h2>Чат с пользователями</h2>
+  <div id="chat" style="border: 1px solid #ccc; height: 200px; overflow-y: scroll;"></div>
+  <input id="msg" placeholder="Ваше сообщение">
+  <button onclick="sendMsg()">Отправить</button>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const socket = new WebSocket('ws://localhost:5000');
+    socket.binaryType = 'text'; // 💡 Фикс
+
+    socket.onmessage = (e) => {
+  if (typeof e.data === 'string') {
+    appendMessage(e.data);
+  } else if (e.data instanceof Blob) {
+    const reader = new FileReader();
+    reader.onload = () => appendMessage(reader.result);
+    reader.readAsText(e.data);
+  }
+};
+
+function appendMessage(text) {
+  const p = document.createElement('p');
+  p.textContent = text;
+  chat.appendChild(p);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+
+    function sendMsg() {
+      const msg = document.getElementById('msg').value;
+      if (msg.trim()) {
+        socket.send(`Админ: ${msg}`);
+        document.getElementById('msg').value = '';
+      }
+    }
+  </script>
+</body>
+</html>

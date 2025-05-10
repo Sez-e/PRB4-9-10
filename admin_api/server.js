@@ -10,6 +10,11 @@ const PORT = 8080;
 const DATA_PATH = path.join(__dirname, '..', 'shared', 'products.json');
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname))); 
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin_api/index.html'));
+});
 
 // Swagger
 const swaggerDocument = YAML.load(path.join(__dirname, 'api-spec.yaml'));
@@ -50,7 +55,7 @@ app.put('/api/products/:id', (req, res) => {
   res.json({ message: 'Товар обновлен' });
 });
 
-// Delete
+// Deletе
 app.delete('/api/products/:id', (req, res) => {
   const id = parseInt(req.params.id);
   let products = JSON.parse(fs.readFileSync(DATA_PATH));

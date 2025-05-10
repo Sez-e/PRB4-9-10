@@ -1,36 +1,75 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Каталог товаров</title>
-  <style>
-    .card { border: 1px solid #ccc; padding: 1em; margin: 1em; display: inline-block; width: 200px; vertical-align: top; }
-    .title { font-weight: bold; font-size: 1.2em; }
-    .price { color: green; }
-    .category { font-style: italic; font-size: 0.9em; color: #666; }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Каталог</title>
 </head>
 <body>
-  <h1>Каталог товаров</h1>
+  <h1>Товары</h1>
+  <button onclick="loadProducts('name price')">Название + Цена</button>
+  <button onclick="loadProducts('name description')">Название + Описание</button>
   <div id="products"></div>
 
+  <h2>Чат с поддержкой</h2>
+  <div id="chat" style="border: 1px solid #ccc; height: 200px; overflow-y: scroll; margin-bottom: 10px;"></div>
+  <input id="msg" placeholder="Ваше сообщение">
+  <button onclick="sendMsg()">Отправить</button>
+
   <script>
-    fetch('/products')
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById('products');
-        data.forEach(p => {
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <div class="title">${p.name}</div>
-            <div class="price">${p.price} руб.</div>
-            <div>${p.description}</div>
-            <div class="category">${p.categories.join(', ')}</div>
-          `;
-          container.appendChild(card);
-        });
+    const chat = document.getElementById('chat');
+    const socket = new WebSocket('ws://localhost:5000');
+    socket.binaryType = 'text';
+
+    socket.onmessage = (e) => {
+  if (typeof e.data === 'string') {
+    appendMessage(e.data);
+  } else if (e.data instanceof Blob) {
+    const reader = new FileReader();
+    reader.onload = () => appendMessage(reader.result);
+    reader.readAsText(e.data);
+  }
+};
+
+function appendMessage(text) {
+  const p = document.createElement('p');
+  p.textContent = text;
+  chat.appendChild(p);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+
+    function sendMsg() {
+      const msg = document.getElementById('msg').value;
+      if (msg.trim()) {
+        socket.send(`Клиент: ${msg}`);
+        document.getElementById('msg').value = '';
+      }
+    }
+
+    async function loadProducts(fields) {
+      const query = `query { products { ${fields} } }`;
+      const res = await fetch('http://localhost:4000/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
       });
+
+      const data = await res.json();
+      document.getElementById('products').innerHTML = data.data.products
+        .map(p => {
+          let html = `<div style="border:1px solid black;margin:5px;padding:5px">`;
+          if ('name' in p) html += `<strong>${p.name}</strong><br>`;
+          if ('price' in p) html += `Цена: ${p.price}<br>`;
+          if ('description' in p) html += `Описание: ${p.description}<br>`;
+          html += `</div>`;
+          return html;
+        })
+        .join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProducts('name price');
+    });
   </script>
 </body>
 </html>
