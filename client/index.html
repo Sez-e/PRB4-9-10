@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Каталог товаров</title>
+  <style>
+    .card { border: 1px solid #ccc; padding: 1em; margin: 1em; display: inline-block; width: 200px; vertical-align: top; }
+    .title { font-weight: bold; font-size: 1.2em; }
+    .price { color: green; }
+    .category { font-style: italic; font-size: 0.9em; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Каталог товаров</h1>
+  <div id="products"></div>
+
+  <script>
+    fetch('/products')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('products');
+        data.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="title">${p.name}</div>
+            <div class="price">${p.price} руб.</div>
+            <div>${p.description}</div>
+            <div class="category">${p.categories.join(', ')}</div>
+          `;
+          container.appendChild(card);
+        });
+      });
+  </script>
+</body>
+</html>

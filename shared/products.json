@@ -1,0 +1,48 @@
+[
+  {
+    "id": 1,
+    "name": "Кепка",
+    "price": 0,
+    "description": "Кепка",
+    "categories": [
+      "Одежда"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Футболка",
+    "price": 2990,
+    "description": "Футболка.",
+    "categories": [
+      "Одежда"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Шорты",
+    "price": 3490,
+    "description": "Шорты.",
+    "categories": [
+      "Одежда"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Рюкзак",
+    "price": 4590,
+    "description": "Рюкзак.",
+    "categories": [
+      "Аксессуары",
+      "Одежда"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Кроссовки",
+    "price": 8990,
+    "description": "Кроссовки.",
+    "categories": [
+      "Обувь"
+    ]
+  }
+]
