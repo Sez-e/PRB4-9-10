@@ -24,7 +24,7 @@ const schema = buildSchema(`
 `);
 
 const getProducts = () => {
-  const data = fs.readFileSync(path.join(__dirname, '../PRB3/shared/products.json'));
+  const data = fs.readFileSync(path.join(__dirname, '../app/shared/products.json'));
   return JSON.parse(data);
 };
 

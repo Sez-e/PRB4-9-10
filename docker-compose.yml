@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"  # product_server
+      - "8080:8080"  # admin_api
+      - "4000:4000"  # graphql_server
+      - "5000:5000"  # chat_server
+
+    volumes:
+      - ./shared:/app/shared:ro
+      - ./client:/app/client:ro
